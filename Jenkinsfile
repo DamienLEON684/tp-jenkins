@@ -1,12 +1,6 @@
 pipeline {
-    agent any 
+    agent any
     stages {
-        stage('Clean Workspace') {
-            steps {
-                echo '--- Cleaning the workspace ---'
-                cleanWs()
-            }
-        }
         stage('Build') {
             steps {
                 echo '--- Simulating a build by creating a fake artifact ---'
@@ -28,9 +22,24 @@ pipeline {
     }
     post {
         always {
-            echo '--- Archiving artifacts and recording test results ---'
+            echo '--- Running Post-Build Actions ---'
             archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
             junit 'build/reports/**/*.xml'
+            echo 'One way or another, I have finished'
+            echo '--- Cleaning up the workspace ---'
+            deleteDir() /* clean up our workspace */
+        }
+        success {
+            echo 'I succeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
         }
     }
 }
