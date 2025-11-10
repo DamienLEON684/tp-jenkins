@@ -1,6 +1,12 @@
 pipeline {
     agent any 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                echo '--- Cleaning the workspace ---'
+                cleanWs()
+            }
+        }
         stage('Build') {
             steps {
                 echo '--- Simulating a build by creating a fake artifact ---'
@@ -20,7 +26,6 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             echo '--- Archiving artifacts and recording test results ---'
