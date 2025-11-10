@@ -1,24 +1,16 @@
 pipeline {
-    agent any 
+    agent any
     stages {
-        stage('Build and Test') { 
+        stage('Test inside Container') {
             steps {
-                echo '--- Checking Docker Version ---'
-                bat 'docker run --rm node:24.11.0-alpine3.22 node --version'
-                echo '--- Listing Environment Variables ---'
-                bat 'set' 
+                echo '--- Running node command inside a Linux container (from our Windows agent) ---'
+                bat 'docker run --rm node:24.11.0-alpine3.22 node --eval "console.log(process.arch, process.platform)"'
             }
         }
     }
     post {
-        always {
-            echo 'This will always run'
-        }
         success {
-            echo 'This will run only if successful (Pipeline OK!)'
-        }
-        failure {
-            echo 'This will run only if failed'
+            echo 'Pipeline successful'
         }
     }
 }
