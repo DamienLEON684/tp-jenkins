@@ -1,18 +1,26 @@
 pipeline {
-    agent any 
-    environment {
-        DISABLE_AUTH = 'true'
-        DB_ENGINE    = 'sqlite'
-    }
-
+    agent any
     stages {
-        stage('Test Environment Variables') {
+        stage('Build') {
             steps {
-                echo "Database engine is ${DB_ENGINE}"
-                echo "DISABLE_AUTH is ${DISABLE_AUTH}"
-                echo "--- Affichage de toutes les variables ---"
-                bat "set"
+                echo '--- Simulating a build by creating a fake artifact ---'
+                bat 'mkdir build\\libs'
+                bat 'echo "This is a fake jar file" > build\\libs\\my-app-1.0.jar'
             }
+        }
+        stage('Test') {
+            steps {
+                echo '--- Simulating tests by creating a fake JUnit report ---'
+                bat 'mkdir build\\reports'
+                bat 'echo "<testsuite tests=\"1\" failures=\"0\" errors=\"0\"><testcase classname=\"my.test\" name=\"myTest\"/></testsuite>" > build\\reports\\TEST-report.xml'
+            }
+        }
+    }
+    post {
+        always {
+            echo '--- Archiving artifacts and recording test results ---'
+            archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+            junit 'build/reports/**/*.xml'
         }
     }
 }
