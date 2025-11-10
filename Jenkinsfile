@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    options {
+        skipStagesAfterUnstable()
+    }
     stages {
         stage('Build') {
             steps {
@@ -17,6 +20,24 @@ pipeline {
     <testcase classname="my.test" name="myTest"/>
 </testsuite>
 '''
+            }
+        }
+        stage('Deploy - Staging') {
+            steps {
+                echo "Deploying to Staging..."
+                bat "echo Deploying to Staging..."
+            }
+        }
+        stage('Sanity check') {
+            steps {
+                input "Does the staging environment look ok?"
+            }
+        }
+        stage('Deploy - Production') {
+            steps {
+                // On simule avec 'bat' au lieu de 'sh'
+                echo "Deploying to PRODUCTION..."
+                bat "echo Deploying to PRODUCTION..."
             }
         }
     }
