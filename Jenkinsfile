@@ -1,16 +1,18 @@
 pipeline {
-    agent any
-    stages {
-        stage('Test inside Container') {
-            steps {
-                echo '--- Running node command inside a Linux container (from our Windows agent) ---'
-                bat 'docker run --rm node:24.11.0-alpine3.22 node --eval "console.log(process.arch, process.platform)"'
-            }
-        }
+    agent any 
+    environment {
+        DISABLE_AUTH = 'true'
+        DB_ENGINE    = 'sqlite'
     }
-    post {
-        success {
-            echo 'Pipeline successful'
+
+    stages {
+        stage('Test Environment Variables') {
+            steps {
+                echo "Database engine is ${DB_ENGINE}"
+                echo "DISABLE_AUTH is ${DISABLE_AUTH}"
+                echo "--- Affichage de toutes les variables ---"
+                bat "set"
+            }
         }
     }
 }
