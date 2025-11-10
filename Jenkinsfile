@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent any 
     stages {
         stage('Build') {
             steps {
@@ -12,10 +12,15 @@ pipeline {
             steps {
                 echo '--- Simulating tests by creating a fake JUnit report ---'
                 bat 'mkdir build\\reports'
-                bat 'echo "<testsuite tests=\"1\" failures=\"0\" errors=\"0\"><testcase classname=\"my.test\" name=\"myTest\"/></testsuite>" > build\\reports\\TEST-report.xml'
+                writeFile file: 'build/reports/TEST-report.xml', text: '''
+<testsuite tests="1" failures="0" errors="0">
+    <testcase classname="my.test" name="myTest"/>
+</testsuite>
+'''
             }
         }
     }
+
     post {
         always {
             echo '--- Archiving artifacts and recording test results ---'
